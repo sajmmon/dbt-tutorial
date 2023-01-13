@@ -1,0 +1,37 @@
+CREATE OR REPLACE TABLE JAFFLE.RAW.CUSTOMERS
+(ID INTEGER,
+FIRST_NAME STRING,
+LAST_NAME STRING);
+
+CREATE OR REPLACE TABLE JAFFLE.RAW.ORDERS
+(ID	INTEGER,
+USER_ID	INTEGER,
+ORDER_DATE	DATE,
+STATUS	STRING,
+_etl_loaded_at	DATETIME);
+
+CREATE OR REPLACE TABLE JAFFLE.RAW.PAYMENTS
+(id	INTEGER,
+orderid	INTEGER,
+paymentmethod	STRING,
+status	STRING,
+amount	INTEGER,
+created	DATE,
+_batched_at	DATETIME);
+
+
+put file://data/customers.csv @~;
+put file://data/orders.csv @~;
+put file://data/payment.csv @~;
+
+COPY INTO JAFFLE.RAW.CUSTOMERS FROM @~
+FILES = ( 'customers.csv.gz' )
+FILE_FORMAT = ( TYPE = CSV SKIP_HEADER = 1 );
+
+COPY INTO JAFFLE.RAW.ORDERS FROM @~
+FILES = ( 'orders.csv.gz' )
+FILE_FORMAT = ( TYPE = CSV SKIP_HEADER = 1 );
+
+COPY INTO JAFFLE.RAW.PAYMENTS FROM @~
+FILES = ( 'payment.csv.gz' )
+FILE_FORMAT = ( TYPE = CSV SKIP_HEADER = 1 );
